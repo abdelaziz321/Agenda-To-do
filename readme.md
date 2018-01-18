@@ -11,13 +11,13 @@ A simple app to manage your tasks built with Laravel framework 5.5
 1- Clone the repository
 
 ```
-https://github.com/abdelaziz321/Agenda-To-do
+git clone https://github.com/abdelaziz321/Agenda-To-do
 ```
 
 2- change the directory into Agenda folder
 
 ```
-cd Agenda
+cd Agenda-To-do
 ```
 
 3- install the dependencies by running Composer's install command
@@ -34,7 +34,7 @@ cp .env.example .env
 
 5- edit `.env` file with appropriate credential for your database server - these parameter(`DB_USERNAME`, `DB_PASSWORD`).
 
-6- create a database named `agenda`
+6- create a database named `Agenda`
 
 7- migrate your database
 
