@@ -1,0 +1,1137 @@
+/*============================================
+* Author    : Abdelaziz Selim  (^‿^)
+* Email     : abdelazizmahmoud321@gmail.com
+* Project   : Agenda - todo Tasks
+* Version   : 1.0
+----------------------------------------------
+          *** TABLE OF CONTENTS ***
+----------------------------------------------
+    * 01. General
+    * 02. Navbar Button
+    * 03. Side Bar
+    * 04. Todo
+        a- Add Task Button
+        b- Task Dialog
+        c- Notes Dialog
+        d- List
+        e- Task
+    * 05. Register System
+    * 06. Features
+    * 07. Edit Profile
+    * 08. Choose Skin
+    * 09. Message
+----------------------------------------------
+*** 'ctrl + f' the title to navigate :)
+==============================================*/
+
+
+/*----------------------------------------------
+*   01. General
+*----------------------------------------------*/
+*{
+    outline: none !important;
+    box-sizing: border-box;
+}
+body{
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    letter-spacing: 1px;
+    overflow-x: hidden !important;
+    background-color: #FFFFFF;
+    position: relative;
+}
+a,a:hover,a:focus{
+    text-decoration: none !important;
+}
+
+.main{
+    display: flex;
+    position: relative;
+    min-height: 100vh;
+    max-height: 100vh;
+    transition: all 0.3s ease-in-out;
+    width: 100vw;
+    background-color: #135;
+}
+.main.hidesidebar{
+    width: calc(100vw + 300px);
+}
+
+/*----------------------------------------------
+*   02. Navbar Button
+*----------------------------------------------*/
+.navbar_btn{
+    margin: 0 -20px;
+    text-align: center;
+    background-color: #ddd;
+    margin-bottom: 30px;
+    min-height: 44px;
+    z-index: 5;
+}
+.navbar_btn button{
+    background-color: transparent;
+    color: #012 !important;
+    font-size: 2.5em;
+    padding: 0;
+}
+.navbar_btn button:hover{
+    color: #777 !important;
+}
+.navbar_btn button.changenavbtn.changenavbtn{
+    position: fixed;
+    top: 15px;
+    right: 32px;
+    color: #ddd !important;
+}
+.navbar_btn button.changenavbtn.changenavbtn:hover{
+    color: #fff !important;
+}
+
+/*----------------------------------------------
+*   03. Side Bar
+*----------------------------------------------*/
+.sidebar{
+    background-color: #012;
+    padding: 0 20px;
+    min-height: 100vh;
+    max-height: 100vh;
+    position: relative;
+    flex: 0;
+    min-width: 300px;
+    text-align: center;
+}
+/* Profile */
+.sidebar .profile_info .img_responsive{
+    padding: 0 50px;
+    margin-bottom: 10px;
+}
+.sidebar .profile_info .img_responsive img{
+    width: 100%;
+    border-radius: 50%;
+}
+.sidebar .profile_info h4{
+    color: #d6d6d6;
+    font-weight: 900;
+    text-align: center;
+    letter-spacing: 1px;
+    padding: 0 5px 1px;
+    margin-top: 0;
+    font-size: 1.3em;
+}
+.sidebar .profile_info > a{
+    padding: 7px 11px;
+    font-size: 1.1em;
+    margin: 0 5px 10px 5px;
+}
+/* Notes */
+.sidebar .notes{
+    text-align: left;
+}
+.sidebar .notes h4{
+    color: #ddd;
+    margin-top: 30px
+}
+.sidebar .notes ul{
+    list-style: none;
+    padding-left: 0;
+    text-align: center;
+    overflow: auto;
+    padding: 6px;
+    border: 2px dashed rgba(255,255,255,0.06);
+}
+.sidebar .notes ul > li a{
+    display: block;
+    color: #ddd;
+    padding: 7px 10px;
+    margin-bottom: 8px;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 5px;
+}
+.sidebar .notes ul > li a:hover{
+    background-color: rgba(255, 255, 255, 0.2);
+}
+.sidebar .notes > a{
+    padding: 7px 11px;
+    font-size: 1.1em;
+    margin-top: 10px;
+}
+/* Developer */
+.developer{
+    position: absolute;
+    bottom: 0;
+    text-align: center;
+    width: 100%;
+    margin: 0 -20px;
+}
+.developer > p{
+    margin-bottom: 5px;
+    color: #aaa;
+}
+.developer .name{
+    color: #e2e2e2;
+    font-weight: 900;
+}
+.developer .social{
+    background-color: #ddd;
+    padding: 5px 0;
+    cursor: default;
+}
+.developer .social > a{
+    padding: 0 3px;
+    font-size: 1.5em;
+    color: #888;
+}
+.developer .social > a:hover{
+    color: #012;
+}
+
+/*----------------------------------------------
+*   04. Todo
+*----------------------------------------------*/
+/* a- Add Task Button Task Button */
+.addbtn{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+}
+.addbtn button{
+    height: auto;
+    width: auto;
+    border: 7px solid transparent;
+    padding: 0 13px;
+    border-radius: 50%;
+    background-color: rgba(0,0,0,0.7);
+    color: #eee !important;
+    box-shadow: 0 0 6px rgba(255,255,255,0.4);
+}
+.addbtn button:hover{
+    background-color: rgba(0,0,0,0.9);
+    color: #fff !important;
+}
+.addbtn button i{
+    font-size: 2.7em;
+}
+
+/* b- Task Dialog */
+.dialog{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    visibility: hidden;
+    z-index: 100;
+    background-color: transparent;
+    box-shadow: 2px 2px 17px rgba(0, 17, 34, 0.6);
+    min-width: 450px;
+    border-radius: 5px;
+    overflow: hidden;
+    border: 2px solid rgba(255,255,255,0.3);
+    transition: all 0.3s ease-in-out;
+    transform: translate(-50%, -50%) scale(0.1) skewY(10deg);
+}
+.dialog.show{
+    visibility: visible;
+    transform: translate(-50%, -50%);
+}
+.dialog .header{
+    position: relative;
+    padding: 17px 12px 15px 12px;
+    color: #ccc;
+    text-transform: capitalize;
+    background-color: #135;
+    margin-top: -1px;
+}
+.dialog .header > p{
+    margin: 0;
+}
+.dialog .header > p > i{
+    font-size: 1.1em;
+    color: #ff0;
+}
+.dialog .header .btn_close{
+    position: absolute;
+    top: 14px;
+    right: 10px;
+    font-size: 1.4em;
+    background-color: transparent;
+    border: 0;
+}
+.dialog .body{
+    padding: 15px 10px 0 10px;
+    background-color: #EEE;
+}
+.dialog .body .task_editor{
+    margin-bottom: 15px;
+}
+
+.dialog .body input[type="radio"]{
+    display:none;
+}
+.dialog .body input[type="radio"]+label{
+    cursor:pointer;
+}
+.dialog .body input[type="radio"]+label:before{
+    content:"";
+    display:inline-block;
+    height:21px;
+    margin:-1px 4px 0 0;
+    vertical-align:middle;
+    width:21px;
+    background-image: url("../images/radio.png");
+    background-position: 0px 0px;
+    background-repeat: no-repeat;
+}
+.dialog .body input[type="radio"][id="low"]:checked+label:before{
+    background-position: 0 -66px;
+}
+.dialog .body input[type="radio"][id="mid"]:checked+label:before{
+    background-position: 0 -44px;
+}
+.dialog .body input[type="radio"][id="high"]:checked+label:before{
+    background-position: 0 -22px;
+}
+.fr-toolbar.fr-toolbar{
+    border-top: 5px dashed #ddd;
+}
+.dialog .footer{
+    margin: 10px -10px 0 -10px;
+    text-align: right;
+    padding: 10px;
+    background-color: #e0e0e0;
+}
+.dialog .footer button[type="submit"]{
+    border-radius: 0;
+    padding: 7px 30px;
+    background-color: #135;
+    letter-spacing: 1px;
+}
+.dialog .footer button[type="submit"]:hover{
+    opacity: 0.9;
+}
+
+/* c- Notes Dialog */
+.note_dialog{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 600px;
+    width: 90%;
+    height: 90%;
+    margin: auto;
+    overflow: auto;
+    visibility: hidden;
+    z-index: 100;
+    background-color: transparent;
+    box-shadow: 2px 2px 17px rgba(0, 17, 34, 0.6);
+    border-radius: 5px;
+    border: 2px solid rgba(255,255,255,0.3);
+    transition: all 0.3s ease-in-out;
+    transform: translate(20%, -40%) scale(0.05) skewX(30deg);
+}
+.note_dialog.show{
+    visibility: visible;
+    transform: translate(-50%, -50%);
+}
+.note_dialog header{
+    position: relative;
+    padding: 6px 15px 4px 15px;
+    color: #ccc;
+    text-transform: capitalize;
+    background-color: #135;
+}
+.note_dialog header > i{
+    font-size: 2em;
+    margin-right: 5px;
+    color: rgba(255,255,255,0.5);
+    vertical-align: sub;
+}
+.note_dialog header > input{
+    border-radius: 0;
+    background-color: transparent;
+    border-width: 0;
+    display: inline-block;
+    width: 70%;
+    height: 40px;
+    padding: 0;
+    font-size: 1.6em;
+    color: #eee;
+}
+.note_dialog header > input::-webkit-input-placeholder{
+    color: rgba(255,255,255,0.7);
+    font-size: 0.85em;
+}
+.note_dialog header > input::-moz-placeholder{
+    color: rgba(255,255,255,0.7);
+    font-size: 0.85em;
+}
+.note_dialog header > input:-ms-input-placeholder{
+    color: rgba(255,255,255,0.7);
+    font-size: 0.85em;
+}
+.note_dialog header > .btn_close{
+    position: absolute;
+    top: 13px;
+    right: 15px;
+    font-size: 1.4em;
+    background-color: transparent;
+    border: 0;
+}
+.note_dialog .body{
+    padding: 15px 15px 15px 15px;
+    background-color: #EEE;
+}
+.note_dialog .body .save_btn{
+    padding-top: 14px;
+    text-align: right;
+}
+.note_dialog .body .save_btn button[type="submit"]{
+    border-radius: 0;
+    padding: 7px 30px;
+    background-color: #135;
+    letter-spacing: 1px;
+}
+.note_dialog .body .save_btn button[type="submit"]:hover{
+    opacity: 0.9;
+}
+.note_dialog footer{
+    position: relative;
+    padding: 10px 15px;
+    background-color: #e0e0e0;
+}
+.note_dialog footer p{
+    margin: 0;
+    color: #999
+}
+.note_dialog footer p time{
+    color: #666;
+}
+.note_dialog footer a.delete_note{
+    position: absolute;
+    top: 8px;
+    right: 16px;
+    font-size: 1.4em;
+    color: #000;
+    opacity: 0.7;
+}
+.note_dialog footer a.delete_note:hover{
+    opacity: 1;
+}
+
+/* d- List */
+.todo{
+    position: relative;
+    -webkit-flex: 5;
+    flex: 5;
+}
+.todo .list{
+    min-height: 50vh;
+    max-height: 50vh;
+    padding: 5px 40px;
+    border: 1px dashed rgba(255,255,255,0.1);
+}
+.todo .list.future{
+    background-color: #159;
+}
+.todo .list.past{
+    background-color: #135;
+}
+.todo .col-md-6{
+    padding: 0;
+}
+.todo .list h3{
+    color: #EEE;
+    background: linear-gradient(to right, rgba(255,255,255,0.05), transparent 70%);
+    padding: 10px 20px;
+    margin-bottom: 20px;
+}
+.todo .list h3 i{
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* e- Task */
+.tasks{
+    height: calc(50vh - 120px);
+}
+.slimScrollBar{
+    display: none !important;
+}
+.slimScrollDiv:hover .slimScrollBar{
+    display: block !important;
+}
+.todo .list .tasks .task{
+    position: relative;
+    background-color: #FFFFFF;
+    padding: 10px 20px;
+    background: radial-gradient(#fff, #eef);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    border-radius: 0 0 5px 5px;
+    margin-bottom: 20px;
+    margin-right: 10px;
+    border-top-width: 5px;
+    border-top-style: solid;
+    opacity: 0.8;
+    cursor: -webkit-grab;
+    cursor: -moz-grab;
+}
+.todo .list .tasks .task:active{
+    cursor: -webkit-grabbing;
+    cursor: -moz-grabbing;
+}
+.todo .list .tasks .task:hover{
+    opacity: 1;
+}
+.todo .list .tasks .task.low{
+    border-top-color: #32942d;
+}
+.todo .list .tasks .task.mid{
+    border-top-color: #d6d600;
+}
+.todo .list .tasks .task.high{
+    border-top-color: #de4b4b;
+}
+
+.todo .list .tasks .task .btns{
+    position: absolute;
+    visibility: hidden;
+    top: 5px;
+    right: 5px;
+}
+.todo .list .tasks .task .btns a{
+    background-color: transparent;
+    border-width: 0;
+    padding: 0 3px;
+    margin: 0 1px;
+    opacity: 0.7;
+    color: #000;
+    min-width: 18px;
+    display: inline-block;
+}
+.todo .list .tasks .task:hover .btns{
+    visibility: visible;
+}
+.todo .list .tasks .task .btns a:hover{
+    opacity: 1;
+}
+
+.todo .list .tasks .task .line{
+    color: #888;
+    font-size: 10px;
+}
+.todo .list .tasks .task span{
+    font-size: 1.2em;
+}
+.todo .list .tasks .task .description{
+    letter-spacing: 1px;
+    margin: 0;
+}
+
+/*----------------------------------------------
+*   05. Register System
+*----------------------------------------------*/
+.register_system{
+    position: absolute;
+    width: 98%;
+    height: 96%;
+    top: 2%;
+    left: 1%;
+    right: 1%;
+    bottom: 2%;
+    z-index: 4;
+    overflow: auto;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: rgba(0, 17, 34, 0.85);
+}
+.register_system > div{
+    margin: auto;
+}
+.register_system > div > h2{
+    text-align: center;
+    color: #eee;
+    padding: 20px 0 30px 0;
+    text-shadow: 0 0 6px #77afe6;
+    margin-top: 10px;
+}
+.register_system h2 > small{
+    text-shadow: 0 0 0;
+    color: #fff;
+    font-size: 0.5em;
+    opacity: 0.5;
+}
+.register_system h2 > i{
+    color: #77afe6;
+    font-size: 1.2em;
+    vertical-align: text-top;
+    margin-right: 6px;
+    text-shadow: 0 0 0;
+}
+.register_system .signin,
+.register_system .signup{
+    background-color: #FFF;
+    padding: 40px 50px;
+    margin: 0 auto;
+    box-shadow: 2px 2px 5px rgba(17, 85, 153, 0.48);
+}
+.register_system .signin h3,
+.register_system .signup h3{
+    text-align: center;
+    margin-bottom: 20px;
+    color: #777;
+}
+.register_system .signin h3 > i,
+.register_system .signup h3 > i{
+    color: #159;
+    font-size: 1.5em;
+    vertical-align: text-top;
+    margin-right: 5px;
+}
+
+.register_system .signin .reset_link{
+    display: block;
+    background-color: rgba(0,0,0,0.03);
+    padding: 3px 10px;
+    margin-top: 10px;
+    border-top: 1px solid #ccc;
+}
+
+.nav-tabs > li{
+    width: 50%;
+}
+.nav-tabs > li > a{
+    border-radius: 0;
+    background-color: #159;
+    border: 0 !important;
+    margin: 0;
+    padding: 15px;
+    text-align: center;
+    font-size: 1.2em;
+    color: #FFF;
+}
+.nav-tabs > li > a:hover{
+    background-color: #159;
+    opacity: 0.9;
+}
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:focus,
+.nav-tabs > li.active > a:hover{
+    background-color: #FFF !important;
+    color: #666;
+    opacity: 1;
+}
+
+.register_system form .form-group{
+    margin-bottom: 25px;
+}
+.register_system form .form-group .form-control-feedback{
+    color: #7fa3c8;
+    font-size: 2.1em;
+    min-width: 40px;
+    right: 0;
+}
+.register_system form input:not([type="file"]){
+    border: 0;
+    box-shadow: 0 0 0;
+    border-radius: 0;
+    border-bottom: 1px solid #81b0de;
+    padding: 3px 2px;
+    color: #159;
+}
+.register_system form input::-webkit-input-placeholder{
+    color: rgba(17, 51, 85, 0.4);
+    letter-spacing: 1px;
+    font-size: 0.92em;
+}
+.register_system form input::-moz-placeholder{
+    color: rgba(17, 51, 85, 0.4);
+    letter-spacing: 1px;
+    font-size: 0.92em;
+}
+.register_system form input:-ms-input-placeholder{
+    color: rgba(17, 51, 85, 0.4);
+    letter-spacing: 1px;
+    font-size: 0.92em;
+}
+
+.register_system form input:focus,
+.register_system form textarea:focus{
+    box-shadow: 0 0 0;
+    border-left: 1px solid rgb(129, 176, 222);
+    padding-left: 6px;
+    transition: all 0.2s ease-in-out;
+}
+
+.register_system form .file_input{
+    border: 0;
+    box-shadow: 0 0 0;
+    border-radius: 0;
+    border-bottom: 1px solid #81b0de;
+    margin-bottom: 25px;
+    padding: 3px 2px;
+    color: rgba(17, 51, 85, 0.4);
+    white-space: nowrap;
+    overflow: hidden;
+}
+.register_system form .file_input label{
+    color: rgba(17, 51, 85, 0.4);
+    font-size: 0.85em;
+    margin-right: 10px;
+}
+.register_system form .file_input input[type="file"]{
+    display: inline-block;
+}
+.register_system form button[type="submit"]{
+    float: right;
+}
+
+.register_system form input[type=checkbox].css-checkbox {
+    position:absolute;
+    z-index:-1000;
+    left:-1000px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    height:1px;
+    width:1px;
+    margin:-1px;
+    padding:0;
+    border:0;
+}
+
+.register_system form input[type=checkbox].css-checkbox + label.css-label {
+    padding-left: 25px;
+    height: 20px;
+    display: inline-block;
+    line-height: 20px;
+    background-repeat: no-repeat;
+    background-position: 0 0;
+    font-size: 1em;
+    vertical-align: middle;
+    cursor: pointer;
+    color: #888;
+    font-weight: 100;
+}
+
+.register_system form input[type=checkbox].css-checkbox:checked + label.css-label {
+    background-position: 0 -20px;
+}
+.register_system form label.css-label {
+    background-image:url("../images/checkbox.png");
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.register_system .parsley-errors-list{
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #d54949;
+    padding: 3px 10px;
+    list-style: none;
+    color: #fff;
+    border-radius: 0 0 7px 7px;
+    font-size: 0.85em;
+    z-index: 9;
+}
+.register_system .feedback{
+    display: none;
+    position: absolute;
+    top: 50px;
+    left: 15px;
+    width: calc(100% - 30px);
+    padding: 5px 15px;
+    z-index: 2;
+    text-align: center;
+    background-color: rgba(0,0,0,0.1);
+    color: #f00;
+}
+.register_system form button.btn{
+    border-radius: 0;
+    padding: 9px 35px;
+    background-color: #159;
+}
+.register_system form button.btn:hover{
+    background-color: #159;
+    opacity: 0.9;
+}
+
+/*----------------------------------------------
+*   06. Features
+*----------------------------------------------*/
+.features{
+    position: relative;
+    text-align: left;
+    margin-bottom: 30px;
+    background-color: #f9f9f9;
+    padding: 30px 50px;
+    box-shadow: 2px 2px 5px rgba(17, 85, 153, 0.48);
+}
+.features h2{
+    margin: 10px 0 40px 0;
+    font-size: 2em;
+    text-shadow: 0 0 0 #77afe6;
+    padding: 0;
+    color: #555;
+}
+.features h2 span.label{
+    font-size: 0.55em;
+    font-weight: 100;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+    padding: 1px 10px;
+    margin-left: 10px;
+}
+.features .widget .features_icon{
+    padding-left: 0;
+    padding-right: 0;
+    float: left;
+    margin-right: 20px;
+}
+.features .widget .bag{
+    color: #FFF;
+    font-size: 26px;
+    background-color: #159;
+    height: 50px;
+    width: 70px;
+    position: relative;
+    padding: 5px;
+    border-top: 3px solid rgba(255,255,255,0.4);
+    box-shadow: 0 -8px 0 #159;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    text-align: center;
+    border-radius: 50% 5px 2px 2px;
+    opacity: 0.9;
+}
+.features .widget:hover .bag{
+    opacity: 1;
+}
+.features .widget .features_info{
+    padding-left: 0;
+}
+.features .widget h3{
+    color: #666;
+    margin-bottom: 5px;
+    font-size: 1.3em;
+}
+.features .widget p{
+    color: #888;
+    font-size: 1.1em;
+    margin-bottom: 0;
+}
+
+/* Developer */
+.features .developer{
+    left: 0;
+    margin: 0;
+}
+.features .developer > p{
+    color: #777;
+}
+.features .developer .name{
+    color: #159;
+}
+.features .developer .social{
+    background-color: #159;
+}
+.features .developer .social > a{
+    color: rgba(255,255,255,0.8);
+}
+.features .developer .social > a:hover{
+    color: #f9f9f9;
+}
+
+
+/*----------------------------------------------
+*   07. Edit Profile
+*----------------------------------------------*/
+.profile{
+    -webkit-flex: 5;
+    flex: 5;
+    display: none;
+    position: relative;
+    left: -70%;
+    overflow: auto;
+}
+.profile.take_place{
+    -webkit-animation: navigate-in 0.5s 1 normal forwards;
+    -moz-animation: navigate-in 0.5s 1 normal forwards;
+    -o-animation: navigate-in 0.5s 1 normal forwards;
+    animation: navigate-in 0.5s 1 normal forwards;
+}
+@-webkit-keyframes navigate-in {
+  0%   { left: -70%; }
+  100% { left: 0; }
+}
+@-moz-keyframes navigate-in {
+  0%   { left: -70%; }
+  100% { left: 0; }
+}
+@-o-keyframes navigate-in {
+  0%   { left: -70%; }
+  100% { left: 0; }
+}
+@keyframes navigate-in {
+  0%   { left: -70%; }
+  100% { left: 0; }
+}
+
+.profile .profile_form {
+    width: 70%;
+    max-width: 700px;
+    margin: 100px auto;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+    min-width: 450px;
+    border-radius: 3px;
+    overflow: hidden;
+    border: 2px solid rgba(255,255,255,0.65);
+}
+.profile .profile_form .header{
+    position: relative;
+    padding: 7px 20px 7px 20px;
+    color: #ccc;
+    text-transform: capitalize;
+    background-color: #159;
+}
+.profile .profile_form .header h3{
+    margin: 0;
+    font-size: 1.4em;
+    color: #ddd;
+}
+.profile .profile_form .header h3 > i{
+    margin-right: 5px;
+    font-size: 1.9em;
+    vertical-align: middle;
+    color: #638cb4;
+}
+.profile .profile_form .header .btn_close{
+    position: absolute;
+    top: 14px;
+    right: 15px;
+    font-size: 1.4em;
+    background-color: transparent;
+    border: 0;
+}
+
+.profile .profile_form .edit_form{
+    padding: 25px 20px 20px 20px;
+    background-color: #EEE;
+}
+.profile .profile_form label{
+    color: rgba(0,0,0,0.6);
+    font-weight: 100;
+}
+.profile .profile_form input:not([type="file"]),
+.profile .profile_form .edit_form .file_input{
+    border-width: 0;
+    box-shadow: 0 0 0;
+    border-radius: 0;
+    background-color: rgba(0,0,0,0.07);
+    border-top: 2px solid #ccc;
+    color: #135;
+    letter-spacing: 1px;
+}
+.profile .profile_form form input::-webkit-input-placeholder{
+    color: rgba(17, 51, 85, 0.4);
+    letter-spacing: 1px;
+    font-size: 0.92em;
+}
+.profile .profile_form form input::-moz-placeholder{
+    color: rgba(17, 51, 85, 0.4);
+    letter-spacing: 1px;
+    font-size: 0.92em;
+}
+.profile .profile_form form input:-ms-input-placeholder{
+    color: rgba(17, 51, 85, 0.4);
+    letter-spacing: 1px;
+    font-size: 0.92em;
+}
+.profile .profile_form .edit_form .form-group,
+.profile .profile_form .edit_form .file_input{
+    margin-bottom: 20px;
+}
+.profile .profile_form .form-control-feedback{
+    color: #159;
+    font-size: 2em;
+    min-width: 40px;
+    right: 0;
+    opacity: 0.6;
+}
+.profile .profile_form .edit_form .file_input{
+    color: #999;
+    padding: 4px 5px;
+}
+.profile .profile_form .edit_form .file_input input{
+    width: 100%;
+    cursor: pointer;
+}
+.profile .profile_form form button[type="submit"],
+.profile .profile_form form button[type="button"]{
+    float: right;
+    border-radius: 0;
+    padding: 7px 25px;
+    background-color: #159;
+    letter-spacing: 1px;
+}
+.profile .profile_form .panel{
+    margin: 0;
+    border-width: 0;
+    border-radius: 0;
+}
+.profile .profile_form .panel .panel-heading{
+    background-color: #159;
+    color: #ddd;
+    border-width: 0;
+    border-radius: 0;
+    border-top: 1px solid rgba(255,255,255,0.15);
+}
+.profile .profile_form .panel .panel-heading .panel-title{
+    font-size: 1.1em;
+    padding: 4px 1px;
+}
+.profile .profile_form .panel .panel-heading .panel-title > a{
+    display: block;
+}
+.profile .profile_form .panel .panel-heading .panel-title > a > i{
+    margin-right: 6px;
+    font-size: 1.2em;
+    vertical-align: text-top;
+    color: #638cb4;
+}
+.profile .profile_form .panel.reset_section .panel-body{
+    padding: 0;
+    display: none;
+}
+.profile .profile_form .reset_form{
+    padding: 15px 20px 20px 20px;
+    background-color: #e9e9e9;
+    border-top: 3px solid rgba(0,0,0,0.1);
+}
+.profile .profile_form .reset_form .form-group{
+    display: inline-block;
+    width: 85%;
+}
+.profile .profile_form .reset_form button[type="button"]{
+    width: 14%;
+    display: inline-block;
+    padding: 7px 15px;
+    border-width: 0;
+}
+
+/*----------------------------------------------
+*   08. Choose Skin
+*----------------------------------------------*/
+.profile .profile_form .panel.skin_section .panel-body{
+    padding: 0;
+}
+.profile .profile_form .panel .skin_form{
+    background-color: #eee;
+    padding: 15px 20px;
+}
+.profile .profile_form .panel .skin_form .skin_palette{
+    display: inline-block;
+    position: relative;
+    height: 100px;
+    width: 100px;
+    overflow: hidden;
+    margin: 5px 15px 10px 0;
+    margin-right: 15px;
+    margin-top: 5px;
+    background-color: #123;
+    border: 5px solid #ccc;
+    border-radius: 0px;
+    cursor: pointer;
+}
+.profile .profile_form .panel .skin_form .skin_palette:hover,
+.profile .profile_form .panel .skin_form .skin_palette.checked{
+    border-color: #159;
+}
+
+.profile .profile_form .panel .skin_form .skin_palette span{
+    display: block;
+    float: left;
+    height: 150%;
+    width: 44%;
+    margin-top: -24px;
+    margin-left: 5px;
+    border-radius: 30%;
+    transform: rotate(45deg);
+}
+.profile .profile_form .panel .skin_form .skin_palette i{
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 3;
+    font-size: 4em;
+    line-height: 1.95;
+    text-align: center;
+    background-color: rgba(0,0,0,0.5);
+    color: #ddd;
+}
+/*----------------------------------------------
+*   09. Message
+*----------------------------------------------*/
+.message{
+    position: fixed;
+    bottom: -120px;
+    left: 20px;
+    width: 550px;
+    background-color: #000;
+    z-index: 105;
+    opacity: 0.5;
+    padding: 15px;
+    border-radius: 3px;
+    border: 1px solid rgba(255,255,255,0.3);
+    transition: all 0.4s ease-in-out;
+}
+.message:hover{
+    opacity: 1;
+}
+.message.up{
+    bottom: 20px;
+}
+.message > div{
+    position: relative;
+}
+.message span{
+    width: 40px;
+    height: 40px;
+    display: block;
+    float: left;
+}
+.message span.green{
+    background-color: #0f0;
+}
+.message span.red{
+    background-color: #f00;
+}
+.message span.yellow{
+    background-color: #ff0;
+}
+.message p{
+    margin: 0;
+    display: inline-block;
+    float: left;
+    padding: 5px 20px;
+    color: #FFF;
+    font-size: 1.2em;
+}
+.message .close_message{
+    position: absolute;
+    top: -4px;
+    right: 0;
+    background-color: transparent;
+    border-width: 0;
+    padding: 0;
+    margin: 0;
+    color: #FFF;
+    font-size: 1.2em;
+}
