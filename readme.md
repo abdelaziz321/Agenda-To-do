@@ -11,7 +11,7 @@ A simple app to manage your tasks built with Laravel framework 5.5
 1- Clone the repository
 
 ```
-https://github.com/abdelaziz321/Agend.git
+https://github.com/abdelaziz321/Agenda-To-do
 ```
 
 2- change the directory into Agenda folder
