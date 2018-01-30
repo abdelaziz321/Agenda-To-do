@@ -12,7 +12,7 @@ class Task extends Model
         $this->belongsTo('App\User');
     }
 
-    public function scopefilterTime($query, $filter)
+    public function scopefilterSection($query, $filter)
     {
         switch ($filter) {
             case 'overdue':

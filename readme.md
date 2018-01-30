@@ -1,10 +1,11 @@
 # Agenda
 A simple app to manage your tasks built with Laravel framework 5.5
 
+![Drag & Drop](/screenshots/drag.gif)
+
 ## Demo video
 
 [Youtube](https://www.youtube.com/watch?v=dv5ykNiLdZM)
-
 
 ## Installation
 

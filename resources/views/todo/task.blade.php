@@ -1,5 +1,5 @@
 
-<div class="task {{ $task->priority }}" data-id="{{ $task->id }}">
+<div class="task {{ $task->priority }}" data-id="{{ $task->id }}" data-move="{{ route('tasks.move', $task->id) }}">
     <div class="btns">
         <a href="{{ route('tasks.update', $task->id) }}" class="edit_task" title="Edit Task">
             <i class="ion ion-wrench"></i>

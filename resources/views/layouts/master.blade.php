@@ -35,6 +35,7 @@
                     </div>
                 </div>
             </div>
+            <div id="draggable_helper"></div>
         </div>
         <!-- /End To Do list -->
 

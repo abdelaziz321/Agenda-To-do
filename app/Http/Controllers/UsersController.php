@@ -34,8 +34,10 @@ class UsersController extends Controller
             $user->photo = $filename;
             Image::make($photo)->fit(160)->save( public_path('images/uploads/profile/' . $filename ) );
         }
+
         $user->name = $request->input('name');
         $user->save();
+
         return response()->json([
             'status' => 'your profile has been updated successfully',
             'photo' => url('images/uploads/profile/' . $user->photo),

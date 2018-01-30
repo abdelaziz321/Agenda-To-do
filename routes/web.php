@@ -14,6 +14,7 @@
 // Task Routes
 Route::get('/', 'TasksController@index');
 Route::resource('tasks', 'TasksController', ['only' => ['store', 'update', 'destroy']]);
+Route::post('tasks/move/{id}', 'TasksController@move')->name('tasks.move');  #update the deadline
 
 // Note Routes
 Route::get('notes/dialog', 'NotesController@getNoteDialog');

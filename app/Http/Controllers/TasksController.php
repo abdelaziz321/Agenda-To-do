@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\DeadlineHelper;
 use Illuminate\Http\Request;
-use Validator;
 use Carbon\Carbon;
+use Validator;
 use App\Task;
 use Auth;
 
 class TasksController extends Controller
 {
-    public function __construct() {
+    private $deadline;
+
+    public function __construct(DeadlineHelper $deadline) {
+        $this->deadline = $deadline;
         $this->middleware('auth');
     }
 
@@ -23,10 +27,10 @@ class TasksController extends Controller
     {
         $user = Auth::user();
         $tasks = [
-            'today'    => $user->tasks()->latest()->filterTime('today')->get(),
-            'tomorrow' => $user->tasks()->latest()->filterTime('tomorrow')->get(),
-            'comming'  => $user->tasks()->latest()->filterTime('comming')->get(),
-            'overdue'  => $user->tasks()->latest()->filterTime('overdue')->get()
+            'today'    => $user->tasks()->latest()->filterSection('today')->get(),
+            'tomorrow' => $user->tasks()->latest()->filterSection('tomorrow')->get(),
+            'comming'  => $user->tasks()->latest()->filterSection('comming')->get(),
+            'overdue'  => $user->tasks()->latest()->filterSection('overdue')->get()
         ];
 
         $notes = $user->notes()->latest()->get();
@@ -45,7 +49,7 @@ class TasksController extends Controller
         $request->validate([
             'date' => 'required|date_format:Y-m-d',
             'time' => 'required|date_format:H:i',
-            'body' => 'required',   // TODO: secure
+            'body' => 'required',
             'priority' => ['required', 'regex:(low|mid|high)']
         ]);
 
@@ -63,22 +67,9 @@ class TasksController extends Controller
 
         return response()->json([
             'status'    => 'New task has been added successfully',
-            'time'      => $this->filterTime($deadline),
+            'section'   => $this->deadline->getDeadlineSection($deadline),
             'newTask'   => view('todo.task', compact('task'))->render()
         ]);
-    }
-
-    private function filterTime($deadline)
-    {
-        if ($deadline->isToday()) {
-            return 'today';
-        } else if ($deadline->isTomorrow()) {
-            return 'tomorrow';
-        } else if ($deadline->isFuture()) {
-            return 'comming';
-        } else if ($deadline->isPast()) {
-            return 'overdue';
-        }
     }
 
     /**
@@ -95,7 +86,7 @@ class TasksController extends Controller
         $request->validate([
             'date' => 'required|date_format:Y-m-d',
             'time' => 'required|date_format:H:i',
-            'body' => 'required',   // TODO: secure
+            'body' => 'required',
             'priority' => ['required', 'regex:(low|mid|high)']
         ]);
 
@@ -111,7 +102,7 @@ class TasksController extends Controller
 
         return response()->json([
             'status'    => 'Your task has been updated successfully',
-            'time'      => $this->filterTime($deadline),
+            'section'   => $this->deadline->getDeadlineSection($deadline),
             'newTask'   => view('todo.task', compact('task'))->render()
         ]);
     }
@@ -130,6 +121,29 @@ class TasksController extends Controller
 
         return response()->json([
             'status' => 'Your Task has been deleted successfully'
+        ]);
+    }
+
+    /**
+     * Move Task Between Sections
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function move(Request $request, $id)
+    {
+        $sectionTo = $request->input('sectionTo');
+        $sectionFrom = $request->input('sectionFrom');
+
+        $task = Task::find($id);
+        $task->deadline = $this->deadline->makeDeadline($sectionTo);
+        $task->save();
+
+        return response()->json([
+            'task' => view('todo.task', compact('task'))->render(),
+            'section' => $sectionTo,
+            'status' => "task moved From ${sectionFrom} To ${sectionTo}"
         ]);
     }
 }

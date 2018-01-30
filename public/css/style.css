@@ -453,13 +453,19 @@ a,a:hover,a:focus{
 .tasks{
     height: calc(50vh - 120px);
 }
+.tasks.hovered{
+    background-color: rgba(0,0,0,0.1);
+    border-bottom: 2px solid rgba(2552,555,255,0.1);
+    border-radius: 0 0 5px 5px;
+}
 .slimScrollBar{
     display: none !important;
 }
 .slimScrollDiv:hover .slimScrollBar{
     display: block !important;
 }
-.todo .list .tasks .task{
+.todo .list .tasks .task,
+#draggable_helper .task{
     position: relative;
     background-color: #FFFFFF;
     padding: 10px 20px;
@@ -474,20 +480,20 @@ a,a:hover,a:focus{
     cursor: -webkit-grab;
     cursor: -moz-grab;
 }
-.todo .list .tasks .task:active{
-    cursor: -webkit-grabbing;
-    cursor: -moz-grabbing;
+#draggable_helper .task .btns{
+    display: none;
 }
+
 .todo .list .tasks .task:hover{
     opacity: 1;
 }
-.todo .list .tasks .task.low{
+.task.low{
     border-top-color: #32942d;
 }
-.todo .list .tasks .task.mid{
+.task.mid{
     border-top-color: #d6d600;
 }
-.todo .list .tasks .task.high{
+.task.high{
     border-top-color: #de4b4b;
 }
 

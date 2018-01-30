@@ -81,6 +81,9 @@
     <!-- FROALA-EDITOR JS -->
     <script src='https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.7.3/js/froala_editor.min.js'></script>
 
+    <!-- JQUERY UI JS -->
+    <script src="{{ URL::asset('js/jquery-ui.min.js') }}"></script>
+
     <!-- SCRIPT JS -->
     <script src="{{ URL::asset('js/script.js') }}"></script>
 

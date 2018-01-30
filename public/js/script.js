@@ -8,8 +8,8 @@
         *** TABLE OF CONTENTS ***
 ----------------------------------------------
     * 00. General
-    * 01. Task dialog functions
-    * 02. Note dialog functions
+    * 01. Task functions
+    * 02. Note functions
     * 03. Profile Section functions
     * 04. Message functions
 ==============================================*/
@@ -35,6 +35,17 @@ $(document).ready(function () {
         taskPriorityRadio = $('.dialog .body input[name="priority"]'),
         taskIdInput = $('.dialog .body #id'),
         closeDialog = $('html, #dialog_close'),
+        draggableOptions = {
+            start: function (event, ui) {
+                $(ui.helper).width(tasks.find('.task').width());
+            },
+            containment: '.todo',
+            zIndex: 3,
+            cursor: 'move',
+            revert: 'invalid',
+            helper: "clone",
+            appendTo: '#draggable_helper'
+        },
         // $Note
         userNotes = $('.sidebar .notes ul'),
         addNoteBtn = $('#add_note'),
@@ -83,7 +94,7 @@ $(document).ready(function () {
     });
 
     // Edit task
-    tasks.on('click', '.task .btns a.edit_task', function(event) {
+    $(document).on('click', '.task .btns a.edit_task', function(event) {
         event.preventDefault();
         fillTaskDialog($(this).parents('.task'));
         showTaskDialog();
@@ -111,12 +122,21 @@ $(document).ready(function () {
     });
 
     // delete the task from the database & DOM
-    tasks.on('click', '.task .btns a.delete_task', function(event) {
+    $(document).on('click', '.task .btns a.delete_task', function(event) {
         event.preventDefault();
         var task = $(this).parents('.task'),
             url = $(this).attr('href');
 
         deleteTaskRequest(task, url);   // TODO: Undo message
+    });
+
+    // Drag & Drop Tasks
+    tasks.find('.task').draggable(draggableOptions);
+
+    tasks.droppable({
+        accept: '.tasks .task',
+        hoverClass: 'hovered',
+        drop: moveTask,
     });
 
     // Open the Note dialog
@@ -136,25 +156,8 @@ $(document).ready(function () {
     userNotes.on('click', 'li.note > a', function(event) {
         event.preventDefault();
         // get the note
-        var noteLink = $(this),
-            url = noteLink.attr('href');
-
-        $.ajax({
-            url: url,
-            type: 'GET',
-            dataType: 'json'
-        })
-        .done(function(note) {
-            // get Note dialog usaing Ajax at the first time
-            if (noteDialog === null) {
-                var url = noteLink.parents('.notes').find('#add_note').attr('href');
-                getNoteDialog(url, note);
-            } else {
-                fillNoteDialog(note);
-            }
-        });
-
-
+        var noteBtn = $(this);
+        getNote(noteBtn);
     });
 
     // Open Edit Profile Section
@@ -171,7 +174,6 @@ $(document).ready(function () {
     // Logout user and redirect to authanticate page
     logout.on('click', function (event) {
         event.preventDefault();
-        console.log($(this).attr('href'));
         $.ajax({
             url: $(this).attr('href'),
             type: 'POST',
@@ -229,7 +231,7 @@ $(document).ready(function () {
 
 
     /*----------------------------------------------
-    *   01. Task dialog functions
+    *   01. Task functions
     *----------------------------------------------*/
     function resetTaskDialog() {
         taskIdInput.val(0);
@@ -237,6 +239,43 @@ $(document).ready(function () {
         taskBodyInput.froalaEditor('undo.saveStep');
         taskPriorityRadio.prop("checked", false);
         taskPriorityRadio.filter('#low').prop("checked", true);
+    }
+
+    function fillTaskDialog(task) {
+        var id = task.data('id'),
+            body = task.find('.description').html(),
+            deadline = new Date(task.find('#timestamp').text()),
+            date = deadline.getFullYear() + '-' + ('0' + (deadline.getMonth() + 1)).slice(-2) + '-' + ('0' + deadline.getDate()).slice(-2),
+            time = ('0' + deadline.getHours()).slice(-2) + ':' + ('0' + deadline.getMinutes()).slice(-2),
+            pattern = /(low|mid|high)/g,
+            priority = task.attr('class').match(pattern)[0];
+
+        taskIdInput.val(id);
+        taskBodyInput.froalaEditor('html.set', body);
+        taskBodyInput.froalaEditor('undo.saveStep');
+        taskPriorityRadio.prop("checked", false);
+        taskPriorityRadio.filter('[id="' + priority + '"]').prop("checked", true);
+        taskDateInput.val(date);
+        taskTimeInput.val(time);
+    }
+
+    function showTaskDialog() {
+        if (!taskDialog.hasClass('show')) {
+            taskDialog.removeClass('hide');
+            setTimeout(function () {
+                taskDialog.addClass('show');
+            }, 100);
+
+        }
+    }
+
+    function hideTaskDialog() {
+        if (taskDialog.hasClass('show')) {
+            taskDialog.removeClass('show');
+            setTimeout(function () {
+                taskDialog.addClass('hide'); // to hide the default browser btns
+            }, 300);
+        }
     }
 
     function addTaskRequest(form, formData) {
@@ -250,27 +289,11 @@ $(document).ready(function () {
             contentType: false
         })
         .done(function(data) {
-            $('.todo .list.' + data.time + ' .tasks').prepend(data.newTask);
+            $('.todo .list.' + data.section + ' .tasks').prepend(data.newTask);
             showMessage(data.status, 'green');
+            $(document).find('.task[data-id="' + $(data.newTask).data('id') + '"]').draggable(draggableOptions);
         });
 
-    }
-
-    function fillTaskDialog(task) {
-        var id = task.data('id'),
-            body = task.find('.description').html(),
-            deadline = new Date(task.find('#timestamp').text()),
-            date = deadline.getFullYear() + '-' + ('0' + (deadline.getMonth() + 1)).slice(-2) + '-' + ('0' + deadline.getDate()).slice(-2),
-            time = ('0' + deadline.getHours()).slice(-2) + ':' + ('0' + deadline.getMinutes()).slice(-2),
-            priority = task.attr('class').split(' ').pop();
-
-        taskIdInput.val(id);
-        taskBodyInput.froalaEditor('html.set', body);
-        taskBodyInput.froalaEditor('undo.saveStep');
-        taskPriorityRadio.prop("checked", false);
-        taskPriorityRadio.filter('[id="' + priority + '"]').prop("checked", true);
-        taskDateInput.val(date);
-        taskTimeInput.val(time);
     }
 
     function editTaskRequest(form, formData) {
@@ -290,8 +313,9 @@ $(document).ready(function () {
         })
         .done(function(data) {
             $('.todo .list .tasks .task[data-id="' + id + '"]').remove();
-            $('.todo .list.' + data.time + ' .tasks').prepend(data.newTask);
+            $('.todo .list.' + data.section + ' .tasks').prepend(data.newTask);
             showMessage(data.status, 'green');
+            $(document).find('.task[data-id="' + $(data.newTask).data('id') + '"]').draggable(draggableOptions);
         });
     }
 
@@ -314,28 +338,64 @@ $(document).ready(function () {
         });
     }
 
-    function showTaskDialog() {
-        if (!taskDialog.hasClass('show')) {
-            taskDialog.removeClass('hide');
-            setTimeout(function () {
-                taskDialog.addClass('show');
-            }, 100);
+    function moveTask (event, ui) {
+        var task = ui.draggable,
+            sections = /(today|comming|tomorrow|overdue)/g,
+            sectionFrom = task.parents('.list').attr('class').match(sections)[0],
+            sectionTo = $(event.target).parents('.list').attr('class').match(sections)[0];
 
+        if (sectionFrom !== sectionTo) {
+            moveTaskRequest(task, sectionFrom, sectionTo)
         }
     }
 
-    function hideTaskDialog() {
-        if (taskDialog.hasClass('show')) {
-            taskDialog.removeClass('show');
-            setTimeout(function () {
-                taskDialog.addClass('hide'); // to hide the default browser btns
-            }, 300);
-        }
+    function moveTaskRequest(task, from, to) {
+        $.ajax({
+            url: task.data('move'),
+            type: 'POST',
+            dataType: 'json',
+            headers: { 'X-CSRF-Token' : $('meta[name=_token]').attr('content') },
+            data: {
+                sectionFrom: from,
+                sectionTo: to
+            }
+        })
+        .done(function(data) {
+            showMessage(data.status, 'green');
+            $('.todo .list .tasks .task[data-id="' + $(data.task).data('id') + '"]').remove();
+            $('.todo .list.' + data.section + ' .tasks').prepend(data.task);
+            $(document).find('.task[data-id="' + $(data.task).data('id') + '"]').draggable(draggableOptions);
+        });
     }
 
     /*----------------------------------------------
-    *   02. Note dialog functions
+    *   02. Note functions
     *----------------------------------------------*/
+    function resetNoteDialog() {
+        var date = new Date(Date.now()),
+            created = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + ('0' + date.getMinutes()).slice(-2);
+
+        noteTitle.val('New Note');
+        noteEditor.froalaEditor('html.set', '');
+        noteIdInput.val(0);
+        noteCreated.text(created);
+        deleteNoteBtn.hide();
+        showNoteDialog();
+    }
+
+    function fillNoteDialog(note) {
+        var date = new Date(note.created.date),
+            created = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + ('0' + date.getMinutes()).slice(-2);
+
+        noteTitle.val(note.title);
+        noteEditor.froalaEditor('html.set', note.body);
+        noteEditor.froalaEditor('undo.saveStep');
+        noteIdInput.val(note.id);
+        noteCreated.text(created);
+        deleteNoteBtn.fadeIn();
+        showNoteDialog();
+    }
+
     function getNoteDialog(url, note) {
         $.ajax({
             url: url,
@@ -394,6 +454,38 @@ $(document).ready(function () {
         });
     }
 
+    function showNoteDialog() {
+        if (noteDialog.hasClass('show')) {
+            return;
+        }
+        noteDialog.addClass('show');
+
+        // to wait for the transition and resize the editor
+        setTimeout(function () {
+            $('#note_editor').data('froala.editor').opts.height = $('.note_dialog').innerHeight() - 250;
+            $('#note_editor').froalaEditor('size.refresh');
+        }, 500);
+    }
+
+    function getNote(noteBtn) {
+        var url = noteBtn.attr('href');
+
+        $.ajax({
+            url: url,
+            type: 'GET',
+            dataType: 'json'
+        })
+        .done(function(note) {
+            // get Note dialog usaing Ajax at the first time
+            if (noteDialog === null) {
+                var url = noteBtn.parents('.notes').find('#add_note').attr('href');
+                getNoteDialog(url, note);
+            } else {
+                fillNoteDialog(note);
+            }
+        });
+    }
+
     function addNoteRequest(form, formData) {
 
         $.ajax({
@@ -441,7 +533,7 @@ $(document).ready(function () {
             dataType: 'json',
             data: {
                 '_method': 'DELETE',
-                '_token': $('meta[name=_token]').attr('content')
+                '_token': $('meta[name="_token"]').attr('content')
             }
         })
         .done(function(data) {
@@ -453,44 +545,6 @@ $(document).ready(function () {
             showMessage(data.status, 'green');
         });
         resetNoteDialog();
-    }
-
-    function showNoteDialog() {
-        if (noteDialog.hasClass('show')) {
-            return;
-        }
-        noteDialog.addClass('show');
-
-        // to wait for the transition and resize the editor
-        setTimeout(function () {
-            $('#note_editor').data('froala.editor').opts.height = $('.note_dialog').innerHeight() - 250;
-            $('#note_editor').froalaEditor('size.refresh');
-        }, 500);
-    }
-
-    function resetNoteDialog() {
-        var date = new Date(Date.now()),
-            created = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + ('0' + date.getMinutes()).slice(-2);
-
-        noteTitle.val('New Note');
-        noteEditor.froalaEditor('html.set', '');
-        noteIdInput.val(0);
-        noteCreated.text(created);
-        deleteNoteBtn.hide();
-        showNoteDialog();
-    }
-
-    function fillNoteDialog(note) {
-        var date = new Date(note.created.date),
-            created = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + ('0' + date.getMinutes()).slice(-2);
-
-        noteTitle.val(note.title);
-        noteEditor.froalaEditor('html.set', note.body);
-        noteEditor.froalaEditor('undo.saveStep');
-        noteIdInput.val(note.id);
-        noteCreated.text(created);
-        deleteNoteBtn.fadeIn();
-        showNoteDialog();
     }
 
     /*----------------------------------------------
