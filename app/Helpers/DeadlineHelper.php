@@ -6,6 +6,12 @@ use Carbon\Carbon;
 
 class DeadlineHelper
 {
+    /**
+     * Get the deadline section for the given deadline date
+     *
+     * @param  Carbon\Carbon  $deadline
+     * @return string
+     */
     public function getDeadlineSection($deadline)
     {
         if ($deadline->isToday()) {
@@ -20,11 +26,10 @@ class DeadlineHelper
     }
 
     /**
-     * Get the deadline section for the given deadline
+     * make deadline timestamp for a specific deadline section
      *
      * @param  String  $deadline
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Carbon\Carbon
      */
     public function makeDeadline($section) {
         switch ($section) {
