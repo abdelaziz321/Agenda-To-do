@@ -455,6 +455,10 @@ $(document).ready(function () {
     }
 
     function showNoteDialog() {
+        if (todoSection.hasClass('hide')) {
+            showTodoSection();
+        }
+
         if (noteDialog.hasClass('show')) {
             return;
         }
