@@ -50,7 +50,8 @@ class RegisterController extends Controller
     */
     public function showRegistrationForm()
     {
-        return view('authanticate');
+        $users = str_pad(User::count(), 5, 0, STR_PAD_LEFT);
+        return view('authanticate')->withUsers($users);
     }
 
     /**

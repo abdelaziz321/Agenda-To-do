@@ -85,7 +85,7 @@
                     <div class="col-md-6">
                         <!-- Start Features Section-->
                         <section id="features" class="features">
-                            <h2>Agenda Features. <span class="label label-danger">00001 users</span></h2>
+                            <h2>Agenda Features. <span class="label label-danger">{{ $users }} users</span></h2>
                             <div class="widget">
                                 <div class="features_icon">
                                     <div class="bag">
