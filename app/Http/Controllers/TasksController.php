@@ -51,7 +51,7 @@ class TasksController extends Controller
     {
         $date = $request->input('date');
         $time = $request->input('time');
-        $deadline = Carbon::createFromFormat('Y-m-d H:i', "$date  $time");
+        $deadline = Carbon::createFromFormat('Y-m-d H:i', "$date $time");
 
         $task = new Task([
             'deadline' => $deadline->toDateTimeString(),
