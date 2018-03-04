@@ -3,15 +3,32 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
 
+/**
+ * Class Task
+ * @package App
+ */
 class Task extends Model
 {
+    /**
+     * @var array
+     */
+    protected $fillable = [
+        'deadline','body','priority',
+    ];
+
+    /**
+     * belongs to User
+     */
     public function users()
     {
         $this->belongsTo('App\User');
     }
 
+    /**
+     * @param $query
+     * @param $filter
+     */
     public function scopefilterSection($query, $filter)
     {
         switch ($filter) {
