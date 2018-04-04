@@ -127,7 +127,22 @@ $(document).ready(function () {
         var task = $(this).parents('.task'),
             url = $(this).attr('href');
 
-        deleteTaskRequest(task, url);   // TODO: Undo message
+        deleteTaskRequest(task, url);
+    });
+
+    // restore the task
+    $(document).on('click', '.task.restore .restore_message a', function(event) {
+        event.preventDefault();
+        var task = $(this).parents('.task'),
+            url = $(this).attr('href');
+
+        restoreTaskRequest(task, url);
+    });
+
+    // delete the 'restore delete' message
+    $(document).on('click', '.task.restore .restore_message button', function(event) {
+        event.preventDefault();
+        $(this).parents('.task').remove();
     });
 
     // Drag & Drop Tasks
@@ -331,10 +346,30 @@ $(document).ready(function () {
         })
         .done(function(data) {
             showMessage(data.status, 'green');
-            task.fadeOut(500);
             setTimeout(function() {
-                task.remove();
+                task.addClass('restore');
+                task.children('div.info').remove();
+                task.children('div.restore_message').removeClass('hide');
             }, 500);
+        });
+    }
+
+    function restoreTaskRequest(task, url) {
+        var sections = /(today|comming|tomorrow|overdue)/g,
+            section = task.parents('.list').attr('class').match(sections)[0];
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                '_token': $('meta[name=_token]').attr('content')
+            }
+        })
+        .done(function(data) {
+            showMessage(data.status, 'green');
+            task.remove();
+            $('.todo .list.' + section + ' .tasks').prepend(data.restoredTask);
         });
     }
 

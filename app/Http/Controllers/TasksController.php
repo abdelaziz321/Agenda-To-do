@@ -114,6 +114,23 @@ class TasksController extends Controller
     }
 
     /**
+     * Restore a deleted task.
+     *
+     * @param  int $id
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function restore($id) {
+        $task = Task::withTrashed()->findOrFail($id);
+        $task->restore();
+
+        return response()->json([
+            'status'        => 'Your task has been restored successfully',
+            'restoredTask'  => view('todo.task', compact('task'))->render(),
+        ]);
+    }
+
+    /**
      * Move Task Between Sections
      *
      * @param  \Illuminate\Http\Request $request

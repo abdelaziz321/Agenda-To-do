@@ -15,6 +15,7 @@
 Route::get('/', 'TasksController@index');
 Route::resource('tasks', 'TasksController', ['only' => ['store', 'update', 'destroy']]);
 Route::post('tasks/move/{id}', 'TasksController@move')->name('tasks.move');  #update the deadline
+Route::post('tasks/restore/{id}', 'TasksController@restore')->name('tasks.restore');  #restore after delete
 
 // Note Routes
 Route::get('notes/dialog', 'NotesController@getNoteDialog');

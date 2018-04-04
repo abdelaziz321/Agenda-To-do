@@ -532,6 +532,29 @@ a,a:hover,a:focus{
     margin: 0;
 }
 
+.todo .list .tasks .task.restore{
+    border: 0;
+    border-radius: 5px;
+    background: rgba(255,255,255,0.7);
+    padding: 3px 14px;
+    color: #222 !important;
+    box-shadow: 0 0 0;
+}
+.todo .list .tasks .task.restore .restore_message a{
+    display: inline-block;
+    margin: 0 3px 0 6px;
+    font-weight: 900;
+    color: #027a02;
+}
+.todo .list .tasks .task.restore .restore_message button{
+    display: inline-block;
+    font-weight: 900;
+    padding: 0 2px;
+    border: 0;
+    background: transparent;
+    color: #f00;
+}
+
 /*----------------------------------------------
 *   05. Register System
 *----------------------------------------------*/
