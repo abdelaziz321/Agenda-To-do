@@ -370,6 +370,7 @@ $(document).ready(function () {
             showMessage(data.status, 'green');
             task.remove();
             $('.todo .list.' + section + ' .tasks').prepend(data.restoredTask);
+            $(document).find('.task[data-id="' + $(data.restoredTask).data('id') + '"]').draggable(draggableOptions);
         });
     }
 
